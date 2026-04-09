@@ -1,0 +1,12 @@
+🍴 “食选 (MealPicker)” 软件需求计划执行书1. 项目概况定位：基于手势决策的轻量化餐厅推荐原型。目标：验证“品类抽取 + 左右滑选餐”的核心链路。数据策略：原型阶段采用 Static Mocking（静态模拟数据），暂不接入动态地图 API。2. 系统架构采用经典的前后端分离架构，通过 HTTP 协议进行 JSON 数据交换。前端 (Frontend)：Flutter 框架。负责 UI 渲染、手势逻辑、本地状态管理。后端 (Backend)：Python (FastAPI)。负责业务逻辑运算、模拟数据下发、接口协议定义。3. 核心功能需求 (Functional Requirements)3.1 模块一：品类抽取 (The Reveal)逻辑：后端维护一个 Category_List（如：快餐, 甜点, 烧烤）。交互：用户点击按钮 -> 触发后端请求 -> 返回单一品类及其对应的餐厅数组。3.2 模块二：卡片决策流 (Swipe UI)规格：卡片应包含：餐厅名、缩略图、评分、标签。手势定义：Right Swipe (右滑)：写入前端本地 Accept_List。Left Swipe (左滑)：Discard（丢弃）。反馈：滑出屏幕后的位移加速度及旋转角度需符合物理常识。3.3 模块三：最终结果 (Result Generation)逻辑：当卡片堆栈归零，从 Accept_List 中进行二次随机取样，弹出最终选定餐厅。4. 技术栈规格维度技术选型关键理由编程语言Python 3.10+ / Dart 3.x语法简洁，适合初学者快速验证逻辑API 框架FastAPI自动生成 OpenAPI 文档，减少沟通成本UI 框架Flutter高帧率渲染引擎，支撑丝滑动画数据交换JSON轻量级、易于调试的结构化数据格式5. 开发里程碑与分工 (Milestones)第一阶段：环境与协议 (Day 1-4)后端：配置 FastAPI 运行环境。定义 GET /v1/recommend 接口协议。前端：配置 Flutter 环境。编写基础导航逻辑（首页至卡片页）。第二阶段：静态联调 (Day 5-9)后端：实现 Mock 逻辑。编写包含 10 组餐厅信息的 JSON 静态池，并实现随机打乱功能。前端：引入 flutter_card_swiper 或相似组件。将后端返回的 JSON 数据映射到卡片 UI 上。第三阶段：闭环与优化 (Day 10-14)后端：增加“黑名单”过滤逻辑（确保短时间内不重复推荐同一品类）。前端：完善“右滑”后的结果汇总页，增加确认后的弹出动画。6. 核心接口定义 (API Contract)Endpoint: GET /v1/recommendResponse Example:JSON{
+  "category": "日料",
+  "restaurants": [
+    {
+      "res_id": 101,
+      "name": "极上寿司",
+      "image_url": "https://example.com/a.jpg",
+      "rating": 4.7
+    }
+  ]
+}
+7. 风险控制性能瓶颈：卡片图片资源建议统一压缩至 200KB 以下，由后端在 JSON 中提供缩略图链接。并发处理：原型阶段无需考虑分布式，后端单线程异步处理即可满足需求。
