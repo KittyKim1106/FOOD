@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f49d25",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#221a10",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-icon {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<header class="sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-primary/20">
+<div class="flex items-center p-4 justify-between max-w-2xl mx-auto w-full">
+<h1 class="text-lg font-bold leading-tight tracking-tight flex-1 text-center" style="">今日生存意向调查</h1>
+</div>
+</header>
+<main class="flex-1 max-w-2xl mx-auto w-full p-4 space-y-6 pb-12">
+<section class="space-y-2">
+<h2 class="text-3xl font-bold leading-tight tracking-tight text-primary" style="">犹豫就会饿死</h2>
+<p class="text-slate-500 dark:text-slate-400" style="">生存还是毁灭，取决于你下一口吃什么。</p>
+</section>
+<section class="bg-primary/5 dark:bg-primary/10 p-1 rounded-xl flex gap-1 border border-primary/20">
+<label class="flex-1 cursor-pointer group" style="">
+<input checked="" class="hidden peer" name="survival_intent" type="radio"/>
+<div class="flex items-center justify-center py-3 rounded-lg transition-all peer-checked:bg-primary peer-checked:text-white text-slate-500 dark:text-slate-400 font-bold">
+<span class="" style="">想吃 (Want to Eat)</span>
+</div>
+</label>
+<label class="flex-1 cursor-pointer group" style="">
+<input class="hidden peer" name="survival_intent" type="radio"/>
+<div class="flex items-center justify-center py-3 rounded-lg transition-all peer-checked:bg-primary peer-checked:text-white text-slate-500 dark:text-slate-400 font-bold">
+<span class="" style="">不想吃 (Don't Eat)</span>
+</div>
+</label>
+</section>
+<div class="grid gap-3 grid-cols-3"><!-- Row 1 -->
+<div class="group relative flex flex-col gap-1 rounded-xl border border-slate-200 dark:border-primary/20 bg-white dark:bg-primary/5 p-2 hover:border-primary transition-colors opacity-60 grayscale hover:grayscale-0 transition-all">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary text-xl">kebab_dining</span>
+<input class="rounded text-primary focus:ring-primary bg-transparent size-3.5 border-slate-300 dark:border-primary/40" type="checkbox"/>
+</div>
+<div class="flex flex-col">
+<h3 class="text-sm font-bold line-through">肉类</h3>
+<p class="text-slate-500 dark:text-slate-400 text-[10px]">Meat</p>
+</div>
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none"><div class="rotate-12 border-2 border-red-500 text-red-500 px-2 py-0.5 rounded font-bold text-[10px] uppercase opacity-80">Skipped</div></div></div>
+<div class="group relative flex flex-col gap-1 rounded-xl border border-slate-200 dark:border-primary/20 bg-white dark:bg-primary/5 p-2 hover:border-primary transition-colors">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary text-xl">set_meal</span>
+<input checked="" class="rounded border-primary text-primary focus:ring-primary bg-transparent size-3.5" type="checkbox"/>
+</div>
+<div class="flex flex-col">
+<h3 class="text-sm font-bold">海鲜</h3>
+<p class="text-slate-500 dark:text-slate-400 text-[10px]">Seafood</p>
+</div>
+</div>
+<div class="group relative flex flex-col gap-1 rounded-xl border border-slate-200 dark:border-primary/20 bg-white dark:bg-primary/5 p-2 hover:border-primary transition-colors">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary text-xl">eco</span>
+<input checked="" class="rounded border-primary text-primary focus:ring-primary bg-transparent size-3.5" type="checkbox"/>
+</div>
+<div class="flex flex-col">
+<h3 class="text-sm font-bold">蔬菜</h3>
+<p class="text-slate-500 dark:text-slate-400 text-[10px]">Veggies</p>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="group relative flex flex-col gap-1 rounded-xl border border-slate-200 dark:border-primary/20 bg-white dark:bg-primary/5 p-2 hover:border-primary transition-colors">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary text-xl">ramen_dining</span>
+<input checked="" class="rounded border-primary text-primary focus:ring-primary bg-transparent size-3.5" type="checkbox"/>
+</div>
+<div class="flex flex-col">
+<h3 class="text-sm font-bold">面条</h3>
+<p class="text-slate-500 dark:text-slate-400 text-[10px]">Noodle</p>
+</div>
+</div>
+<div class="group relative flex flex-col gap-1 rounded-xl border border-slate-200 dark:border-primary/20 bg-white dark:bg-primary/5 p-2 hover:border-primary transition-colors">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary text-xl">rice_bowl</span>
+<input checked="" class="rounded border-primary text-primary focus:ring-primary bg-transparent size-3.5" type="checkbox"/>
+</div>
+<div class="flex flex-col">
+<h3 class="text-sm font-bold">米饭</h3>
+<p class="text-slate-500 dark:text-slate-400 text-[10px]">Rice</p>
+</div>
+</div>
+<div class="group relative flex flex-col gap-1 rounded-xl border border-slate-200 dark:border-primary/20 bg-white dark:bg-primary/5 p-2 hover:border-primary transition-colors">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary text-xl">nutrition</span>
+<input class="rounded border-slate-300 dark:border-primary/40 text-primary focus:ring-primary bg-transparent size-3.5" type="checkbox"/>
+</div>
+<div class="flex flex-col">
+<h3 class="text-sm font-bold">水果</h3>
+<p class="text-slate-500 dark:text-slate-400 text-[10px]">Fruit</p>
+</div>
+</div>
+<!-- Row 3 -->
+<div class="group relative flex flex-col gap-1 rounded-xl border border-slate-200 dark:border-primary/20 bg-white dark:bg-primary/5 p-2 hover:border-primary transition-colors">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary text-xl">icecream</span>
+<input class="rounded border-slate-300 dark:border-primary/40 text-primary focus:ring-primary bg-transparent size-3.5" type="checkbox"/>
+</div>
+<div class="flex flex-col">
+<h3 class="text-sm font-bold">甜点</h3>
+<p class="text-slate-500 dark:text-slate-400 text-[10px]">Dessert</p>
+</div>
+</div>
+<div class="group relative flex flex-col gap-1 rounded-xl border border-slate-200 dark:border-primary/20 bg-white dark:bg-primary/5 p-2 hover:border-primary transition-colors">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary text-xl">local_bar</span>
+<input class="rounded border-slate-300 dark:border-primary/40 text-primary focus:ring-primary bg-transparent size-3.5" type="checkbox"/>
+</div>
+<div class="flex flex-col">
+<h3 class="text-sm font-bold">饮品</h3>
+<p class="text-slate-500 dark:text-slate-400 text-[10px]">Drinks</p>
+</div>
+</div>
+<div class="group relative flex flex-col gap-1 rounded-xl border border-slate-200 dark:border-primary/20 bg-white dark:bg-primary/5 p-2 hover:border-primary transition-colors">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary text-xl">cookie</span>
+<input class="rounded border-slate-300 dark:border-primary/40 text-primary focus:ring-primary bg-transparent size-3.5" type="checkbox"/>
+</div>
+<div class="flex flex-col">
+<h3 class="text-sm font-bold">零食</h3>
+<p class="text-slate-500 dark:text-slate-400 text-[10px]">Snacks</p>
+</div>
+</div><!-- Row 4 -->
+<div class="group relative flex flex-col gap-1 rounded-xl border border-slate-200 dark:border-primary/20 bg-white dark:bg-primary/5 p-2 hover:border-primary transition-colors">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary text-xl">hot_tub</span>
+<input class="rounded border-slate-300 dark:border-primary/40 text-primary focus:ring-primary bg-transparent size-3.5" type="checkbox"/>
+</div>
+<div class="flex flex-col">
+<h3 class="text-sm font-bold">火锅</h3>
+<p class="text-slate-500 dark:text-slate-400 text-[10px]">Hotpot</p>
+</div>
+</div>
+<div class="group relative flex flex-col gap-1 rounded-xl border border-slate-200 dark:border-primary/20 bg-white dark:bg-primary/5 p-2 hover:border-primary transition-colors">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary text-xl">outdoor_grill</span>
+<input class="rounded border-slate-300 dark:border-primary/40 text-primary focus:ring-primary bg-transparent size-3.5" type="checkbox"/>
+</div>
+<div class="flex flex-col">
+<h3 class="text-sm font-bold">烧烤</h3>
+<p class="text-slate-500 dark:text-slate-400 text-[10px]">BBQ</p>
+</div>
+</div>
+<div class="group relative flex flex-col gap-1 rounded-xl border border-slate-200 dark:border-primary/20 bg-white dark:bg-primary/5 p-2 hover:border-primary transition-colors">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary text-xl">fastfood</span>
+<input class="rounded border-slate-300 dark:border-primary/40 text-primary focus:ring-primary bg-transparent size-3.5" type="checkbox"/>
+</div>
+<div class="flex flex-col">
+<h3 class="text-sm font-bold">快餐</h3>
+<p class="text-slate-500 dark:text-slate-400 text-[10px]">Fast Food</p>
+</div>
+</div></div>
+<div class="pt-4 pb-0"><button class="w-full bg-primary hover:bg-primary/90 text-white py-4 rounded-2xl text-xl font-black tracking-widest shadow-xl shadow-primary/20 active:scale-[0.98] transition-all flex items-center justify-center gap-3" style="">
+                决定 GoGoGo!
+                <span class="material-symbols-outlined" style="">rocket_launch</span>
+</button></div>
+</main>
+<nav class="fixed bottom-0 left-0 right-0 z-50 bg-background-light dark:bg-background-dark border-t border-slate-200 dark:border-primary/20 pb-safe">
+<div class="flex max-w-2xl mx-auto px-4 py-2">
+<a class="flex flex-1 flex-col items-center gap-1 text-primary" href="#" style="">
+<span class="material-symbols-outlined active-icon" style="">home</span>
+<span class="text-xs font-medium" style="">首页</span>
+</a>
+<a class="flex flex-1 flex-col items-center gap-1 text-slate-500 dark:text-slate-400" href="#" style="">
+<span class="material-symbols-outlined" style="">history</span>
+<span class="text-xs font-medium" style="">记录</span>
+</a>
+<a class="flex flex-1 flex-col items-center gap-1 text-slate-500 dark:text-slate-400" href="#" style="">
+<span class="material-symbols-outlined" style="">person</span>
+<span class="text-xs font-medium" style="">我的</span>
+</a>
+</div>
+</nav>
+</body></html>

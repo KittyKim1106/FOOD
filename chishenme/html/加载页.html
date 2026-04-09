@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f49d25",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#221a10",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<title>犹豫就会饿死</title>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased">
+<!-- Splash Screen Container -->
+<div class="relative flex min-h-screen w-full flex-col bg-primary items-center justify-center p-6 overflow-hidden">
+<!-- Background Accent Block (Subtle variation in orange) -->
+<div class="absolute inset-0 bg-primary z-0"></div>
+<!-- Content Wrapper -->
+<div class="relative z-10 flex flex-col items-center justify-center w-full max-w-md">
+<!-- Top App Bar Mockup Style Icon -->
+<div class="mb-12">
+<div class="flex items-center justify-center size-24 bg-slate-900 rounded-2xl shadow-2xl">
+<span class="material-symbols-outlined text-primary text-6xl" style="font-variation-settings: 'FILL' 1">
+                        restaurant
+                    </span>
+</div>
+</div>
+<!-- Main Title -->
+<h1 class="text-slate-900 tracking-tighter text-6xl font-bold leading-tight text-center mb-4">
+                犹豫就会饿死
+            </h1>
+<!-- Central Symbolic Image Block -->
+<div class="w-full aspect-square max-w-[280px] my-8">
+<div class="w-full h-full bg-slate-900 rounded-3xl flex items-center justify-center overflow-hidden shadow-2xl rotate-3">
+<div class="w-full h-full bg-center bg-no-repeat bg-cover opacity-80" data-alt="A steaming hot plate of gourmet food on dark background" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDy9kRAH-if1hIYE80jwMIhnNjiY2fDt84b2wpUjugWuVFZ0k9OYjN14_3tkFW8_3s0r_FbxyNAdjvFmuf2LHSA7w6BJDoRyQLotzcdEAkohdtPQhatdr1ehVMyhl0ZkahCPZW4nSh1PzJzKCpp8kfD4bJNWE-xq4FmgKnJ4ReADSe1BbYDa9FPEJ7mNzMyDYqw36NFS0U2dAiLcn0Ea5KnsyRhVkXhu7GkKdb-mi812EqfLFK5WhVqTIbxo_pSh_etsv1aU0c8Srg");'>
+</div>
+</div>
+</div>
+<!-- Bold Subtitle -->
+<p class="text-slate-900 text-2xl font-bold leading-snug tracking-tight text-center max-w-xs mb-12">
+                别想了，再想就饿昏过去了。
+            </p>
+<!-- Action Button -->
+<div class="w-full">
+<button class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-16 px-5 bg-slate-900 text-primary text-xl font-bold leading-normal tracking-wide transition-transform hover:scale-[1.02] active:scale-95 shadow-xl">
+<span class="truncate">立即开吃</span>
+</button>
+</div>
+</div>
+<!-- Decorative Bottom Element -->
+</div>
+</body></html>

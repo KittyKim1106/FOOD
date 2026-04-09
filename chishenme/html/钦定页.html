@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f49d25",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#181511",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<header class="flex items-center bg-background-light dark:bg-background-dark p-4 sticky top-0 z-10 border-b border-primary/10 justify-between"><button class="p-2 -ml-2 text-slate-400 hover:text-primary transition-colors focus:outline-none">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<h1 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-tight flex-1 text-center font-display">Hesitate and Starve</h1>
+<button class="p-2 -mr-2 text-slate-400 hover:text-primary transition-colors focus:outline-none">
+<span class="material-symbols-outlined">history</span>
+</button></header>
+<main class="flex-1 flex flex-col px-4 py-8 max-w-md mx-auto w-full">
+<div class="text-center mb-8">
+<h2 class="text-primary tracking-tighter text-4xl font-extrabold leading-tight mb-2 font-display">今日钦定：</h2>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium tracking-widest uppercase">The Heavens Have Spoken</p>
+</div>
+<div class="relative group">
+<div class="absolute -inset-1 bg-gradient-to-r from-primary to-orange-600 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+<div class="relative bg-white dark:bg-[#27221b] border border-primary/20 rounded-xl overflow-hidden shadow-2xl">
+<div class="aspect-[4/5] relative flex flex-col items-center justify-center p-8 bg-cover bg-center" data-alt="Glistening Chinese braised pork belly cubes in dark sauce" style="background-image: linear-gradient(to bottom, rgba(24,21,17,0.1), rgba(24,21,17,0.9)), url('https://lh3.googleusercontent.com/aida-public/AB6AXuBd35Odw5VTemVt1xtsIaijDQPvkVE4XjBsQvALM0YIGYDz7lQAGLiNjYNPAWk7_OgbgD4bTKoKh94o_UJClkrTuirdd4wDpF0Ug-TsafwAa5_ah-I5cP5HzgmU5lfggiIp84I2Fsx9ly_rZz0R1M60Jj0vIvPiT7X3bZ9NqW96mR4_LiK_B_vcg5PqaasxdLZSzQ92yhkrHhGD9HgOeOVijcLuFwWZBsUrtmbR74_HaBOHdu69kWr0ZXa9PmYgLze_AVkK7xxLlfM');">
+<div class="absolute top-4 left-4">
+<span class="bg-primary text-background-dark px-3 py-1 rounded-full text-xs font-black tracking-tighter uppercase">Selected</span>
+</div>
+<div class="text-center z-10">
+<div class="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary text-background-dark">
+<span class="material-symbols-outlined !text-4xl">restaurant_menu</span>
+</div>
+<h3 class="text-white text-6xl font-black mb-4 tracking-tighter drop-shadow-2xl">【红烧肉】</h3>
+<p class="text-primary text-xl font-bold italic tracking-wide">Braised Pork Belly</p>
+</div>
+<div class="mt-12 w-full z-10">
+<div class="flex items-center justify-between border-t border-white/20 pt-6">
+<div class="flex flex-col">
+<span class="text-white/60 text-xs uppercase font-bold tracking-widest">Confidence</span>
+<span class="text-white font-display font-bold">99.9% Match</span>
+</div>
+<button class="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white p-3 rounded-lg border border-white/20 transition-colors">
+<span class="material-symbols-outlined">refresh</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-10 space-y-4">
+<button class="w-full flex cursor-pointer items-center justify-center gap-3 rounded-xl h-16 px-6 bg-primary text-background-dark text-lg font-black leading-normal tracking-tight shadow-lg shadow-primary/20 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">location_on</span>
+<span class="truncate">附近哪有卖？</span>
+</button>
+<button class="w-full flex cursor-pointer items-center justify-center gap-3 rounded-xl h-14 px-6 border-2 border-primary/30 text-primary text-base font-bold leading-normal bg-primary/5 hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined">share</span>
+<span class="truncate">分享今日结果</span>
+</button>
+</div>
+<div class="mt-12 flex flex-col items-center gap-4 py-6 border-t border-primary/10">
+<p class="text-slate-500 dark:text-slate-400 text-xs text-center leading-relaxed">
+                "Hesitation is the enemy of the hungry." <br/>
+                Eat well, live well.
+            </p>
+</div>
+</main>
+<nav class="sticky bottom-0 w-full flex gap-2 border-t border-primary/10 bg-white dark:bg-[#27221b] px-4 pb-6 pt-2 z-20">
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400 dark:text-slate-500" href="#">
+<span class="material-symbols-outlined">home</span>
+<p class="text-[10px] font-bold uppercase tracking-widest">Home</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined !fill-1">explore</span>
+<p class="text-[10px] font-bold uppercase tracking-widest">Decision</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400 dark:text-slate-500" href="#">
+<span class="material-symbols-outlined">history</span>
+<p class="text-[10px] font-bold uppercase tracking-widest">History</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400 dark:text-slate-500" href="#">
+<span class="material-symbols-outlined">person</span>
+<p class="text-[10px] font-bold uppercase tracking-widest">Profile</p>
+</a>
+</nav>
+</body></html>

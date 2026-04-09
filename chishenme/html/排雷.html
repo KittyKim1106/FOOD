@@ -1,0 +1,186 @@
+<!DOCTYPE html><html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f49d25",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#221a10",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<title>犹豫就会饿死 - 排除地雷</title>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
+<!-- Top Navigation -->
+<nav class="flex items-center p-4 justify-between sticky top-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md z-10 border-b border-primary/10">
+<div class="text-slate-900 dark:text-slate-100 flex size-10 items-center justify-center rounded-full hover:bg-primary/10 transition-colors" data-icon="arrow_back">
+<span class="material-symbols-outlined" style="">arrow_back</span>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-tight flex-1 text-center" style="">我的</h2>
+<div class="size-10"></div> <!-- Placeholder for symmetry -->
+</nav>
+<!-- Header Hero -->
+<header class="px-6 pt-8 pb-6 flex flex-col items-center">
+<div class="mb-4 size-20 bg-primary/20 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-5xl" style="">person_off</span>
+</div>
+<h1 class="text-slate-900 dark:text-slate-100 text-3xl font-bold leading-tight tracking-tight text-center" style="">排除地雷</h1>
+<p class="text-slate-600 dark:text-slate-400 text-base font-normal leading-relaxed mt-2 text-center max-w-xs" style="">
+                勾选后，这些东西将永远从你的美食推荐中消失。
+            </p>
+</header>
+<!-- Configuration Sections -->
+<main class="flex-1 px-4 space-y-8 pb-12">
+<!-- Category: Flavors -->
+<section class="space-y-3">
+<div class="flex items-center gap-2 px-2">
+<span class="material-symbols-outlined text-primary" style="">restaurant_menu</span>
+<h3 class="text-slate-900 dark:text-slate-100 text-xl font-bold leading-tight" style="">味道排雷 (Flavors)</h3>
+</div>
+<div class="grid gap-2">
+<!-- Item: Spicy -->
+<div class="flex items-center gap-4 bg-white dark:bg-primary/5 p-4 rounded-xl border border-transparent hover:border-primary/30 transition-all group">
+<div class="flex items-center justify-center rounded-lg bg-primary/20 text-primary shrink-0 size-12">
+<span class="material-symbols-outlined" style="">local_fire_department</span>
+</div>
+<div class="flex-1">
+<p class="text-slate-900 dark:text-slate-100 text-lg font-semibold" style="">重辣 (Spicy)</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm" style="">拒绝任何形式的辣椒</p>
+</div>
+<div class="shrink-0">
+<label class="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full border-none bg-slate-300 dark:bg-slate-700 p-0.5 has-[:checked]:justify-end has-[:checked]:bg-primary transition-all duration-200" style="">
+<div class="h-full w-[27px] rounded-full bg-white shadow-md"></div>
+<input class="invisible absolute" type="checkbox">
+</label>
+</div>
+</div>
+<!-- Item: Sour -->
+<div class="flex items-center gap-4 bg-white dark:bg-primary/5 p-4 rounded-xl border border-transparent hover:border-primary/30 transition-all">
+<div class="flex items-center justify-center rounded-lg bg-primary/20 text-primary shrink-0 size-12">
+<span class="material-symbols-outlined" style="">nutrition</span>
+</div>
+<div class="flex-1">
+<p class="text-slate-900 dark:text-slate-100 text-lg font-semibold" style="">酸味 (Sour)</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm" style="">远离陈醋、柠檬风味</p>
+</div>
+<div class="shrink-0">
+<label class="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full border-none bg-slate-300 dark:bg-slate-700 p-0.5 has-[:checked]:justify-end has-[:checked]:bg-primary transition-all duration-200" style="">
+<div class="h-full w-[27px] rounded-full bg-white shadow-md"></div>
+<input class="invisible absolute" type="checkbox">
+</label>
+</div>
+</div>
+<!-- Item: Raw -->
+<div class="flex items-center gap-4 bg-white dark:bg-primary/5 p-4 rounded-xl border border-transparent hover:border-primary/30 transition-all">
+<div class="flex items-center justify-center rounded-lg bg-primary/20 text-primary shrink-0 size-12">
+<span class="material-symbols-outlined" style="">set_meal</span>
+</div>
+<div class="flex-1">
+<p class="text-slate-900 dark:text-slate-100 text-lg font-semibold" style="">生食 (Raw)</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm" style="">不接受生鱼片或半熟肉类</p>
+</div>
+<div class="shrink-0">
+<label class="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full border-none bg-slate-300 dark:bg-slate-700 p-0.5 has-[:checked]:justify-end has-[:checked]:bg-primary transition-all duration-200" style="">
+<div class="h-full w-[27px] rounded-full bg-white shadow-md"></div>
+<input checked="" class="invisible absolute" type="checkbox">
+</label>
+</div>
+</div>
+</div>
+</section>
+<!-- Category: Ingredients -->
+<section class="space-y-3">
+<div class="flex items-center gap-2 px-2">
+<span class="material-symbols-outlined text-primary" style="">eco</span>
+<h3 class="text-slate-900 dark:text-slate-100 text-xl font-bold leading-tight" style="">食材排雷 (Ingredients)</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+<!-- Item: Cilantro -->
+<div class="flex items-center gap-4 bg-white dark:bg-primary/5 p-4 rounded-xl border border-transparent">
+<div class="flex items-center justify-center rounded-lg bg-primary/20 text-primary shrink-0 size-10">
+<span class="material-symbols-outlined" style="">cannabis</span>
+</div>
+<p class="text-slate-900 dark:text-slate-100 text-base font-medium flex-1" style="">香菜 (Cilantro)</p>
+<div class="shrink-0">
+<label class="relative flex h-[28px] w-[46px] cursor-pointer items-center rounded-full border-none bg-slate-300 dark:bg-slate-700 p-0.5 has-[:checked]:justify-end has-[:checked]:bg-primary transition-all duration-200" style="">
+<div class="h-full w-[24px] rounded-full bg-white shadow-sm"></div>
+<input checked="" class="invisible absolute" type="checkbox">
+</label>
+</div>
+</div>
+<!-- Item: Organs -->
+<div class="flex items-center gap-4 bg-white dark:bg-primary/5 p-4 rounded-xl border border-transparent">
+<div class="flex items-center justify-center rounded-lg bg-primary/20 text-primary shrink-0 size-10">
+<span class="material-symbols-outlined" style="">vitals</span>
+</div>
+<p class="text-slate-900 dark:text-slate-100 text-base font-medium flex-1" style="">内脏 (Organs)</p>
+<div class="shrink-0">
+<label class="relative flex h-[28px] w-[46px] cursor-pointer items-center rounded-full border-none bg-slate-300 dark:bg-slate-700 p-0.5 has-[:checked]:justify-end has-[:checked]:bg-primary transition-all duration-200" style="">
+<div class="h-full w-[24px] rounded-full bg-white shadow-sm"></div>
+<input class="invisible absolute" type="checkbox">
+</label>
+</div>
+</div>
+<!-- Item: Garlic -->
+<div class="flex items-center gap-4 bg-white dark:bg-primary/5 p-4 rounded-xl border border-transparent">
+<div class="flex items-center justify-center rounded-lg bg-primary/20 text-primary shrink-0 size-10">
+<span class="material-symbols-outlined" style="">circle</span>
+</div>
+<p class="text-slate-900 dark:text-slate-100 text-base font-medium flex-1" style="">蒜头 (Garlic)</p>
+<div class="shrink-0">
+<label class="relative flex h-[28px] w-[46px] cursor-pointer items-center rounded-full border-none bg-slate-300 dark:bg-slate-700 p-0.5 has-[:checked]:justify-end has-[:checked]:bg-primary transition-all duration-200" style="">
+<div class="h-full w-[24px] rounded-full bg-white shadow-sm"></div>
+<input class="invisible absolute" type="checkbox">
+</label>
+</div>
+</div>
+<!-- Item: Mutton -->
+<div class="flex items-center gap-4 bg-white dark:bg-primary/5 p-4 rounded-xl border border-transparent">
+<div class="flex items-center justify-center rounded-lg bg-primary/20 text-primary shrink-0 size-10">
+<span class="material-symbols-outlined" style="">sound_detection_dog_barking</span>
+</div>
+<p class="text-slate-900 dark:text-slate-100 text-base font-medium flex-1" style="">羊肉 (Mutton)</p>
+<div class="shrink-0">
+<label class="relative flex h-[28px] w-[46px] cursor-pointer items-center rounded-full border-none bg-slate-300 dark:bg-slate-700 p-0.5 has-[:checked]:justify-end has-[:checked]:bg-primary transition-all duration-200" style="">
+<div class="h-full w-[24px] rounded-full bg-white shadow-sm"></div>
+<input class="invisible absolute" type="checkbox">
+</label>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Fixed Footer Action -->
+<footer class="p-4 bg-background-light dark:bg-background-dark border-t border-primary/10 sticky bottom-0">
+<button class="w-full bg-primary hover:bg-primary/90 text-background-dark font-bold py-4 rounded-xl text-lg shadow-lg shadow-primary/20 transition-all active:scale-[0.98]" style="">
+                保存我的喜好 (Save Settings)
+            </button>
+</footer>
+</div>
+</body></html>

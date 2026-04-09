@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html class="dark" lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>犹豫就会饿死 - Hesitate and Starve</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f49d25",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#221a10",
+                        "card-dark": "#27221b",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            min-height: 100dvh;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .fill-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+
+    <!-- Required Scripts -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/history@5/umd/history.development.js"></script>
+    <script src="https://unpkg.com/react-router@6.3.0/umd/react-router.development.js"></script>
+    <script src="https://unpkg.com/react-router-dom@6.3.0/umd/react-router-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { createRoot } = ReactDOM;
+        const { MemoryRouter, Routes, Route, Link, useNavigate } = ReactRouterDOM;
+
+        // --- Shared Components ---
+
+        const BottomNav = ({ activeTab }) => (
+            <nav class="sticky bottom-0 w-full flex gap-2 border-t border-primary/10 bg-white dark:bg-[#27221b] px-4 pb-6 pt-2 z-20">
+                <Link to="/home" className={`flex flex-1 flex-col items-center justify-center gap-1 ${activeTab === 'home' ? 'text-primary' : 'text-slate-400 dark:text-slate-500'}`}>
+                    <span className={`material-symbols-outlined ${activeTab === 'home' ? 'fill-icon' : ''}`}>home</span>
+                    <p className="text-[10px] font-bold uppercase tracking-widest">Home</p>
+                </Link>
+                <Link to="/swipe" className={`flex flex-1 flex-col items-center justify-center gap-1 ${activeTab === 'decision' ? 'text-primary' : 'text-slate-400 dark:text-slate-500'}`}>
+                    <span className={`material-symbols-outlined ${activeTab === 'decision' ? 'fill-icon' : ''}`}>explore</span>
+                    <p className="text-[10px] font-bold uppercase tracking-widest">Decision</p>
+                </Link>
+                <Link to="/history" className={`flex flex-1 flex-col items-center justify-center gap-1 ${activeTab === 'history' ? 'text-primary' : 'text-slate-400 dark:text-slate-500'}`}>
+                    <span className={`material-symbols-outlined ${activeTab === 'history' ? 'fill-icon' : ''}`}>history</span>
+                    <p className="text-[10px] font-bold uppercase tracking-widest">History</p>
+                </Link>
+                <Link to="/settings" className={`flex flex-1 flex-col items-center justify-center gap-1 ${activeTab === 'profile' ? 'text-primary' : 'text-slate-400 dark:text-slate-500'}`}>
+                    <span className={`material-symbols-outlined ${activeTab === 'profile' ? 'fill-icon' : ''}`}>person</span>
+                    <p className="text-[10px] font-bold uppercase tracking-widest">Profile</p>
+                </Link>
+            </nav>
+        );
+
+        // --- Screens ---
+
+        // Screen 3: Splash Screen
+        const SplashScreen = () => {
+            const navigate = useNavigate();
+            return (
+                <div className="relative flex min-h-screen w-full flex-col bg-primary items-center justify-center p-6 overflow-hidden">
+                    <div className="absolute inset-0 bg-primary z-0"></div>
+                    <div className="relative z-10 flex flex-col items-center justify-center w-full max-w-md">
+                        <div className="mb-12">
+                            <div className="flex items-center justify-center size-24 bg-slate-900 rounded-2xl shadow-2xl">
+                                <span className="material-symbols-outlined text-primary text-6xl fill-icon">restaurant</span>
+                            </div>
+                        </div>
+                        <h1 className="text-slate-900 tracking-tighter text-6xl font-bold leading-tight text-center mb-4 font-display">犹豫就会饿死</h1>
+                        <div className="w-full aspect-square max-w-[280px] my-8">
+                            <div className="w-full h-full bg-slate-900 rounded-3xl flex items-center justify-center overflow-hidden shadow-2xl rotate-3">
+                                <div className="w-full h-full bg-center bg-no-repeat bg-cover opacity-80" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDy9kRAH-if1hIYE80jwMIhnNjiY2fDt84b2wpUjugWuVFZ0k9OYjN14_3tkFW8_3s0r_FbxyNAdjvFmuf2LHSA7w6BJDoRyQLotzcdEAkohdtPQhatdr1ehVMyhl0ZkahCPZW4nSh1PzJzKCpp8kfD4bJNWE-xq4FmgKnJ4ReADSe1BbYDa9FPEJ7mNzMyDYqw36NFS0U2dAiLcn0Ea5KnsyRhVkXhu7GkKdb-mi812EqfLFK5WhVqTIbxo_pSh_etsv1aU0c8Srg")'}}></div>
+                            </div>
+                        </div>
+                        <p className="text-slate-900 text-2xl font-bold leading-snug tracking-tight text-center max-w-xs mb-12">别想了，再想就饿昏过去了。</p>
+                        <button onClick={() => navigate('/home')} className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-16 px-5 bg-slate-900 text-primary text-xl font-bold leading-normal tracking-wide transition-transform hover:scale-[1.02] active:scale-95 shadow-xl">
+                            立即开吃
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
+        // Screen 6: Home / Intent Survey
+        const HomePage = () => {
+            const navigate = useNavigate();
+            const [selected, setSelected] = useState(['Seafood', 'Veggies', 'Noodle', 'Rice']);
+            
+            const toggle = (item) => {
+                if (selected.includes(item)) {
+                    setSelected(selected.filter(i => i !== item));
+                } else {
+                    setSelected([...selected, item]);
+                }
+            };
+
+            const categories = [
+                { id: 'meat', label: '肉类', sub: 'Meat', icon: 'kebab_dining', skipped: true },
+                { id: 'seafood', label: '海鲜', sub: 'Seafood', icon: 'set_meal' },
+                { id: 'veggies', label: '蔬菜', sub: 'Veggies', icon: 'eco' },
+                { id: 'noodle', label: '面条', sub: 'Noodle', icon: 'ramen_dining' },
+                { id: 'rice', label: '米饭', sub: 'Rice', icon: 'rice_bowl' },
+                { id: 'fruit', label: '水果', sub: 'Fruit', icon: 'nutrition' },
+                { id: 'dessert', label: '甜点', sub: 'Dessert', icon: 'icecream' },
+                { id: 'drinks', label: '饮品', sub: 'Drinks', icon: 'local_bar' },
+                { id: 'snacks', label: '零食', sub: 'Snacks', icon: 'cookie' },
+                { id: 'hotpot', label: '火锅', sub: 'Hotpot', icon: 'hot_tub' },
+                { id: 'bbq', label: '烧烤', sub: 'BBQ', icon: 'outdoor_grill' },
+                { id: 'fastfood', label: '快餐', sub: 'Fast Food', icon: 'fastfood' }
+            ];
+
+            return (
+                <div className="flex flex-col min-h-screen">
+                    <header className="sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-primary/20">
+                        <div className="flex items-center p-4 justify-between max-w-2xl mx-auto w-full">
+                            <h1 className="text-lg font-bold leading-tight tracking-tight flex-1 text-center font-display">今日生存意向调查</h1>
+                        </div>
+                    </header>
+                    <main className="flex-1 max-w-2xl mx-auto w-full p-4 space-y-6 pb-24">
+                        <section className="space-y-2">
+                            <h2 className="text-3xl font-bold leading-tight tracking-tight text-primary font-display">犹豫就会饿死</h2>
+                            <p className="text-slate-500 dark:text-slate-400">生存还是毁灭，取决于你下一口吃什么。</p>
+                        </section>
+                        <section className="bg-primary/5 dark:bg-primary/10 p-1 rounded-xl flex gap-1 border border-primary/20">
+                            <label className="flex-1 cursor-pointer">
+                                <input defaultChecked className="hidden peer" name="intent" type="radio"/>
+                                <div className="flex items-center justify-center py-3 rounded-lg peer-checked:bg-primary peer-checked:text-white text-slate-500 dark:text-slate-400 font-bold transition-all">想吃 (Want to Eat)</div>
+                            </label>
+                            <label className="flex-1 cursor-pointer">
+                                <input className="hidden peer" name="intent" type="radio"/>
+                                <div className="flex items-center justify-center py-3 rounded-lg peer-checked:bg-primary peer-checked:text-white text-slate-500 dark:text-slate-400 font-bold transition-all">不想吃 (Don't Eat)</div>
+                            </label>
+                        </section>
+                        <div className="grid gap-3 grid-cols-3">
+                            {categories.map(cat => (
+                                <div key={cat.id} 
+                                     onClick={() => !cat.skipped && toggle(cat.label)}
+                                     className={`group relative flex flex-col gap-1 rounded-xl border p-2 transition-all cursor-pointer ${cat.skipped ? 'opacity-40 grayscale' : 'hover:border-primary bg-white dark:bg-primary/5'} ${selected.includes(cat.label) ? 'border-primary ring-1 ring-primary' : 'border-slate-200 dark:border-primary/20'}`}>
+                                    <div className="flex justify-between items-start">
+                                        <span className="material-symbols-outlined text-primary text-xl">{cat.icon}</span>
+                                        {!cat.skipped && <input readOnly checked={selected.includes(cat.label)} className="rounded border-primary text-primary focus:ring-primary bg-transparent size-3.5" type="checkbox"/>}
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <h3 className={`text-sm font-bold ${cat.skipped ? 'line-through' : ''}`}>{cat.label}</h3>
+                                        <p className="text-slate-500 dark:text-slate-400 text-[10px]">{cat.sub}</p>
+                                    </div>
+                                    {cat.skipped && (
+                                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                            <div className="rotate-12 border-2 border-red-500 text-red-500 px-2 py-0.5 rounded font-bold text-[10px] uppercase opacity-80">Skipped</div>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                        <button onClick={() => navigate('/swipe')} className="w-full bg-primary hover:bg-primary/90 text-white py-4 rounded-2xl text-xl font-black tracking-widest shadow-xl shadow-primary/20 active:scale-[0.98] transition-all flex items-center justify-center gap-3">
+                            决定 GoGoGo! <span className="material-symbols-outlined">rocket_launch</span>
+                        </button>
+                    </main>
+                    <BottomNav activeTab="home" />
+                </div>
+            );
+        };
+
+        // Screen 7: Swipe Decision
+        const SwipeDecision = () => {
+            const navigate = useNavigate();
+            return (
+                <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+                    <header className="flex items-center p-4 justify-between bg-background-light dark:bg-background-dark/50 backdrop-blur-md sticky top-0 z-10">
+                        <button onClick={() => navigate(-1)} className="text-slate-400 hover:text-primary transition-colors flex size-12 items-center justify-start">
+                            <span className="material-symbols-outlined text-3xl">chevron_left</span>
+                        </button>
+                        <h1 className="font-display font-bold text-xl tracking-tight text-primary uppercase">犹豫就会饿死</h1>
+                        <button onClick={() => navigate('/history')} className="text-slate-400 hover:text-primary transition-colors flex size-12 items-center justify-end">
+                            <span className="material-symbols-outlined text-2xl">history</span>
+                        </button>
+                    </header>
+                    <main className="flex-1 flex flex-col items-center justify-center p-6 gap-8 max-w-md mx-auto w-full">
+                        <div className="text-center space-y-2">
+                            <h2 className="text-2xl font-display font-extrabold leading-tight tracking-tight text-slate-900 dark:text-slate-100">看着不错，要不就它了？</h2>
+                            <p className="text-slate-500 dark:text-primary/60 font-medium uppercase tracking-widest text-xs">Swipe to Decide Your Meal</p>
+                        </div>
+                        <div className="relative w-full aspect-[4/5] group">
+                            <div className="absolute inset-0 bg-primary/10 rounded-xl rotate-3 scale-95 border-2 border-primary/20"></div>
+                            <div className="absolute inset-0 bg-primary/20 rounded-xl -rotate-2 scale-98 border-2 border-primary/30"></div>
+                            <div className="relative h-full w-full bg-slate-100 dark:bg-background-dark border-4 border-slate-900 dark:border-primary rounded-xl overflow-hidden shadow-2xl flex flex-col">
+                                <div className="flex-1 relative bg-slate-200 dark:bg-zinc-800/50 flex flex-col items-center justify-center p-8 overflow-hidden">
+                                    <div className="absolute inset-0 opacity-10 pointer-events-none">
+                                        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/40 via-transparent to-transparent"></div>
+                                    </div>
+                                    <div className="relative z-10 flex flex-col items-center gap-6">
+                                        <div className="w-32 h-32 rounded-full bg-primary flex items-center justify-center shadow-[0_0_40px_rgba(244,157,37,0.4)]">
+                                            <span className="material-symbols-outlined text-background-dark text-6xl fill-icon">restaurant_menu</span>
+                                        </div>
+                                        <h3 className="text-5xl font-display font-black tracking-tighter text-slate-900 dark:text-white uppercase">红烧肉</h3>
+                                        <div className="flex gap-2">
+                                            <span className="px-3 py-1 bg-primary/20 text-primary text-xs font-bold rounded-full uppercase">Classic</span>
+                                            <span className="px-3 py-1 bg-primary/20 text-primary text-xs font-bold rounded-full uppercase">Salty-Sweet</span>
+                                        </div>
+                                    </div>
+                                    <div className="absolute bottom-6 left-6 right-6">
+                                        <p className="text-slate-600 dark:text-slate-400 text-center font-medium leading-relaxed italic">"经典本帮风味，肥而不腻，入口即化"</p>
+                                    </div>
+                                </div>
+                                <div className="p-6 bg-slate-900 dark:bg-primary flex justify-between items-center">
+                                    <div className="flex flex-col">
+                                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-background-dark/60">Estimated Cost</span>
+                                        <span className="text-xl font-display font-black text-white dark:text-background-dark">¥ 38.00</span>
+                                    </div>
+                                    <button className="bg-white dark:bg-background-dark text-slate-900 dark:text-primary px-5 py-2 rounded-lg font-bold text-sm uppercase tracking-tight shadow-lg">View More</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="w-full grid grid-cols-3 gap-4 px-2">
+                            <div onClick={() => navigate('/failure')} className="flex flex-col items-center gap-2 group cursor-pointer">
+                                <div className="w-14 h-14 rounded-full border-2 border-slate-300 dark:border-slate-700 flex items-center justify-center group-hover:bg-red-500/10 group-hover:border-red-500 transition-all">
+                                    <span className="material-symbols-outlined text-slate-400 group-hover:text-red-500">close</span>
+                                </div>
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 group-hover:text-red-500">Pass</span>
+                            </div>
+                            <div className="flex flex-col items-center gap-2 group cursor-pointer">
+                                <div className="w-14 h-14 rounded-full border-2 border-slate-300 dark:border-slate-700 flex items-center justify-center group-hover:bg-blue-500/10 group-hover:border-blue-500 transition-all">
+                                    <span className="material-symbols-outlined text-slate-400 group-hover:text-blue-500">star</span>
+                                </div>
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 group-hover:text-blue-500">Save</span>
+                            </div>
+                            <div onClick={() => navigate('/result')} className="flex flex-col items-center gap-2 group cursor-pointer">
+                                <div className="w-14 h-14 rounded-full border-2 border-slate-300 dark:border-slate-700 flex items-center justify-center group-hover:bg-primary/10 group-hover:border-primary transition-all">
+                                    <span className="material-symbols-outlined text-slate-400 group-hover:text-primary fill-icon">favorite</span>
+                                </div>
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 group-hover:text-primary">Pick</span>
+                            </div>
+                        </div>
+                    </main>
+                    <footer className="p-6 pb-10">
+                        <button onClick={() => navigate('/result')} className="w-full bg-primary hover:bg-primary/90 text-background-dark font-display font-black text-lg py-4 rounded-xl shadow-[0_8px_0_rgb(180,110,20)] active:translate-y-1 active:shadow-none transition-all uppercase tracking-tighter">随便来一个 (Directly Decide)</button>
+                        <nav className="mt-8 flex justify-around items-center border-t border-slate-200 dark:border-slate-800 pt-6">
+                            <Link to="/home" className="flex flex-col items-center gap-1 text-primary">
+                                <span className="material-symbols-outlined fill-icon">explore</span>
+                                <span className="text-[10px] font-bold uppercase tracking-widest">发现</span>
+                            </Link>
+                            <Link to="/history" className="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors">
+                                <span className="material-symbols-outlined">bookmark</span>
+                                <span className="text-[10px] font-bold uppercase tracking-widest">收藏</span>
+                            </Link>
+                            <Link to="/settings" className="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors">
+                                <span className="material-symbols-outlined">person</span>
+                                <span className="text-[10px] font-bold uppercase tracking-widest">我的</span>
+                            </Link>
+                        </nav>
+                    </footer>
+                </div>
+            );
+        };
+
+        // Screen 2 & 5: Result Screen
+        const ResultScreen = () => {
+            const navigate = useNavigate();
+            return (
+                <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+                    <header className="flex items-center bg-background-light dark:bg-background-dark p-4 sticky top-0 z-10 border-b border-primary/10 justify-between">
+                        <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-slate-400 hover:text-primary transition-colors">
+                            <span className="material-symbols-outlined">chevron_left</span>
+                        </button>
+                        <h1 className="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-tight flex-1 text-center font-display uppercase tracking-widest">Hesitate and Starve</h1>
+                        <button onClick={() => navigate('/history')} className="p-2 -mr-2 text-slate-400 hover:text-primary transition-colors">
+                            <span className="material-symbols-outlined">history</span>
+                        </button>
+                    </header>
+                    <main className="flex-1 flex flex-col px-4 py-8 max-w-md mx-auto w-full">
+                        <div className="text-center mb-8">
+                            <h2 className="text-primary tracking-tighter text-4xl font-extrabold leading-tight mb-2 font-display">今日钦定：</h2>
+                            <p className="text-slate-500 dark:text-slate-400 text-sm font-medium tracking-widest uppercase">The Heavens Have Spoken</p>
+                        </div>
+                        <div className="relative group">
+                            <div className="absolute -inset-1 bg-gradient-to-r from-primary to-orange-600 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+                            <div className="relative bg-white dark:bg-[#27221b] border border-primary/20 rounded-xl overflow-hidden shadow-2xl">
+                                <div className="aspect-[4/5] relative flex flex-col items-center justify-center p-8 bg-cover bg-center" style={{backgroundImage: "linear-gradient(to bottom, rgba(24,21,17,0.1), rgba(24,21,17,0.9)), url('https://lh3.googleusercontent.com/aida-public/AB6AXuBd35Odw5VTemVt1xtsIaijDQPvkVE4XjBsQvALM0YIGYDz7lQAGLiNjYNPAWk7_OgbgD4bTKoKh94o_UJClkrTuirdd4wDpF0Ug-TsafwAa5_ah-I5cP5HzgmU5lfggiIp84I2Fsx9ly_rZz0R1M60Jj0vIvPiT7X3bZ9NqW96mR4_LiK_B_vcg5PqaasxdLZSzQ92yhkrHhGD9HgOeOVijcLuFwWZBsUrtmbR74_HaBOHdu69kWr0ZXa9PmYgLze_AVkK7xxLlfM')"}}>
+                                    <div className="absolute top-4 left-4">
+                                        <span className="bg-primary text-background-dark px-3 py-1 rounded-full text-xs font-black tracking-tighter uppercase">Selected</span>
+                                    </div>
+                                    <div className="text-center z-10">
+                                        <div className="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary text-background-dark">
+                                            <span className="material-symbols-outlined !text-4xl fill-icon">restaurant_menu</span>
+                                        </div>
+                                        <h3 className="text-white text-6xl font-black mb-4 tracking-tighter drop-shadow-2xl">【红烧肉】</h3>
+                                        <p className="text-primary text-xl font-bold italic tracking-wide">Braised Pork Belly</p>
+                                    </div>
+                                    <div className="mt-12 w-full z-10">
+                                        <div className="flex items-center justify-between border-t border-white/20 pt-6">
+                                            <div className="flex flex-col">
+                                                <span className="text-white/60 text-xs uppercase font-bold tracking-widest">Confidence</span>
+                                                <span className="text-white font-display font-bold">99.9% Match</span>
+                                            </div>
+                                            <button onClick={() => navigate('/swipe')} className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white p-3 rounded-lg border border-white/20 transition-colors">
+                                                <span className="material-symbols-outlined">refresh</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="mt-10 space-y-4">
+                            <button className="w-full flex items-center justify-center gap-3 rounded-xl h-16 px-6 bg-primary text-background-dark text-lg font-black leading-normal tracking-tight shadow-lg shadow-primary/20 active:scale-95 transition-transform">
+                                <span className="material-symbols-outlined">location_on</span>
+                                <span className="truncate">附近哪有卖？</span>
+                            </button>
+                            <button className="w-full flex items-center justify-center gap-3 rounded-xl h-14 px-6 border-2 border-primary/30 text-primary text-base font-bold leading-normal bg-primary/5 hover:bg-primary/10 transition-colors">
+                                <span className="material-symbols-outlined">share</span>
+                                <span className="truncate">分享今日结果</span>
+                            </button>
+                        </div>
+                        <div className="mt-12 flex flex-col items-center gap-4 py-6 border-t border-primary/10">
+                            <p className="text-slate-500 dark:text-slate-400 text-xs text-center leading-relaxed italic">
+                                "Hesitation is the enemy of the hungry." <br/> Eat well, live well.
+                            </p>
+                        </div>
+                    </main>
+                    <BottomNav activeTab="decision" />
+                </div>
+            );
+        };
+
+        // Screen 4: Failure Screen
+        const FailureScreen = () => {
+            const navigate = useNavigate();
+            return (
+                <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+                    <header className="flex items-center bg-background-light dark:bg-background-dark p-4 justify-between border-b border-primary/10">
+                        <button onClick={() => navigate('/home')} className="text-slate-400 flex size-12 items-center justify-start"><span className="material-symbols-outlined">close</span></button>
+                        <h2 className="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-tight flex-1 text-center font-display">犹豫就会败北</h2>
+                        <button onClick={() => navigate('/history')} className="text-primary flex size-12 items-center justify-end"><span className="material-symbols-outlined">history</span></button>
+                    </header>
+                    <main className="flex-1 flex flex-col items-center justify-center px-6 py-12 text-center">
+                        <div className="relative mb-8 group">
+                            <div className="absolute -inset-4 bg-primary/20 rounded-full blur-3xl opacity-50"></div>
+                            <div className="relative flex items-center justify-center w-64 h-64 bg-gradient-to-br from-background-dark to-black rounded-full border-4 border-primary/30 shadow-2xl overflow-hidden" style={{backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDQUGaA9tNuJPafyFQbICr1e1LWNEP3VTlpO9O3SMtOKlCgpDZhjuLeOGIqO1JpP3nv0DMs_yYwjmD4zWG1G60Y9xx-zLwxBqx0X0nLPWmPX6MGeJo46r7LrqgZjlvcraVBGMyyIuVOjs0J_mmGClsYFJFaVCEPKW46kRY4zgXeZGPCzJtO3mD7mn3J9Nm64ngSs_jfp5eVKGxgZ4Uvq3oV46Eu8NQT3Abl-nsbem_rpO7SnyLnn0l-WMzs2N_LegxZ9bEVciRTvPA')", backgroundSize: 'cover'}}>
+                                <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
+                                <span className="material-symbols-outlined text-primary text-8xl drop-shadow-[0_0_15px_rgba(244,157,37,0.5)]">air</span>
+                            </div>
+                        </div>
+                        <div className="max-w-md space-y-4">
+                            <h1 className="text-4xl font-bold tracking-tighter text-primary font-display">全军覆没！</h1>
+                            <p className="text-xl font-medium text-slate-400 dark:text-slate-300 leading-relaxed italic">“喝西北风吧”</p>
+                            <div className="pt-4 pb-8 text-sm text-slate-500 max-w-xs mx-auto">你拒绝了所有的提议。机会稍纵即逝，现在只能面对空空如也的行囊。</div>
+                        </div>
+                        <div className="w-full max-w-sm space-y-3">
+                            <button onClick={() => navigate('/home')} className="w-full flex items-center justify-center gap-2 rounded-xl h-14 bg-primary text-background-dark text-lg font-bold tracking-wide hover:scale-[1.02] transition-transform active:scale-95 shadow-lg shadow-primary/20">
+                                <span className="material-symbols-outlined">refresh</span>
+                                <span>大赦天下（重选一次）</span>
+                            </button>
+                            <button onClick={() => navigate('/home')} className="w-full flex items-center justify-center rounded-xl h-12 bg-primary/10 text-primary text-sm font-semibold hover:bg-primary/20 transition-colors">返回主页</button>
+                        </div>
+                    </main>
+                    <BottomNav activeTab="decision" />
+                </div>
+            );
+        };
+
+        // Screen 1: Exclude Mines (Settings)
+        const SettingsScreen = () => {
+            const navigate = useNavigate();
+            return (
+                <div className="flex flex-col min-h-screen">
+                    <nav className="flex items-center p-4 justify-between sticky top-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md z-10 border-b border-primary/10">
+                        <button onClick={() => navigate(-1)} className="text-slate-900 dark:text-slate-100 flex size-10 items-center justify-center rounded-full hover:bg-primary/10 transition-colors">
+                            <span className="material-symbols-outlined">arrow_back</span>
+                        </button>
+                        <h2 className="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-tight flex-1 text-center font-display uppercase tracking-widest">我的</h2>
+                        <div className="size-10"></div>
+                    </nav>
+                    <main className="flex-1 px-4 space-y-8 pb-24 overflow-y-auto">
+                        <header className="px-6 pt-8 pb-6 flex flex-col items-center">
+                            <div className="mb-4 size-20 bg-primary/20 rounded-full flex items-center justify-center">
+                                <span className="material-symbols-outlined text-primary text-5xl">person_off</span>
+                            </div>
+                            <h1 className="text-slate-900 dark:text-slate-100 text-3xl font-bold leading-tight tracking-tight text-center font-display">排除地雷</h1>
+                            <p className="text-slate-600 dark:text-slate-400 text-base font-normal leading-relaxed mt-2 text-center max-w-xs">勾选后，这些东西将永远从你的美食推荐中消失。</p>
+                        </header>
+                        <section className="space-y-3">
+                            <div className="flex items-center gap-2 px-2">
+                                <span className="material-symbols-outlined text-primary">restaurant_menu</span>
+                                <h3 className="text-slate-900 dark:text-slate-100 text-xl font-bold leading-tight font-display">味道排雷 (Flavors)</h3>
+                            </div>
+                            <div className="grid gap-2">
+                                {[
+                                    { label: '重辣 (Spicy)', sub: '拒绝任何形式的辣椒', icon: 'local_fire_department', checked: false },
+                                    { label: '酸味 (Sour)', sub: '远离陈醋、柠檬风味', icon: 'nutrition', checked: false },
+                                    { label: '生食 (Raw)', sub: '不接受生鱼片或半熟肉类', icon: 'set_meal', checked: true }
+                                ].map((item, idx) => (
+                                    <div key={idx} className="flex items-center gap-4 bg-white dark:bg-primary/5 p-4 rounded-xl border border-transparent hover:border-primary/30 transition-all">
+                                        <div className="flex items-center justify-center rounded-lg bg-primary/20 text-primary shrink-0 size-12"><span className="material-symbols-outlined">{item.icon}</span></div>
+                                        <div className="flex-1">
+                                            <p className="text-slate-900 dark:text-slate-100 text-lg font-semibold">{item.label}</p>
+                                            <p className="text-slate-500 dark:text-slate-400 text-sm">{item.sub}</p>
+                                        </div>
+                                        <label className="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full bg-slate-300 dark:bg-slate-700 p-0.5 transition-all duration-200 has-[:checked]:bg-primary has-[:checked]:justify-end">
+                                            <div className="h-full w-[27px] rounded-full bg-white shadow-md"></div>
+                                            <input defaultChecked={item.checked} className="invisible absolute" type="checkbox" />
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                        <section className="space-y-3">
+                            <div className="flex items-center gap-2 px-2">
+                                <span className="material-symbols-outlined text-primary">eco</span>
+                                <h3 className="text-slate-900 dark:text-slate-100 text-xl font-bold leading-tight font-display">食材排雷 (Ingredients)</h3>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                {[
+                                    { label: '香菜 (Cilantro)', icon: 'cannabis', checked: true },
+                                    { label: '内脏 (Organs)', icon: 'vitals', checked: false },
+                                    { label: '蒜头 (Garlic)', icon: 'circle', checked: false },
+                                    { label: '羊肉 (Mutton)', icon: 'sound_detection_dog_barking', checked: false }
+                                ].map((item, idx) => (
+                                    <div key={idx} className="flex items-center gap-4 bg-white dark:bg-primary/5 p-4 rounded-xl border border-transparent">
+                                        <div className="flex items-center justify-center rounded-lg bg-primary/20 text-primary shrink-0 size-10"><span className="material-symbols-outlined">{item.icon}</span></div>
+                                        <p className="text-slate-900 dark:text-slate-100 text-base font-medium flex-1">{item.label}</p>
+                                        <label className="relative flex h-[28px] w-[46px] cursor-pointer items-center rounded-full bg-slate-300 dark:bg-slate-700 p-0.5 transition-all duration-200 has-[:checked]:bg-primary has-[:checked]:justify-end">
+                                            <div className="h-full w-[24px] rounded-full bg-white shadow-sm"></div>
+                                            <input defaultChecked={item.checked} className="invisible absolute" type="checkbox" />
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    </main>
+                    <footer className="p-4 bg-background-light dark:bg-background-dark border-t border-primary/10 sticky bottom-0 z-10 pb-24">
+                        <button onClick={() => navigate('/home')} className="w-full bg-primary hover:bg-primary/90 text-background-dark font-bold py-4 rounded-xl text-lg shadow-lg shadow-primary/20 transition-all active:scale-[0.98]">
+                            保存我的喜好 (Save Settings)
+                        </button>
+                    </footer>
+                    <BottomNav activeTab="profile" />
+                </div>
+            );
+        };
+
+        const HistoryScreen = () => {
+            const navigate = useNavigate();
+            return (
+                <div className="flex flex-col min-h-screen">
+                    <header className="sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-primary/20 p-4 flex items-center justify-between">
+                        <button onClick={() => navigate(-1)} className="text-slate-400 hover:text-primary"><span className="material-symbols-outlined">chevron_left</span></button>
+                        <h1 className="text-lg font-bold font-display uppercase tracking-widest">History</h1>
+                        <div className="w-6"></div>
+                    </header>
+                    <main className="flex-1 p-4 max-w-2xl mx-auto w-full space-y-4">
+                        <div className="p-4 bg-white dark:bg-primary/5 rounded-xl border border-primary/20 flex items-center gap-4">
+                            <div className="size-16 rounded-lg bg-cover bg-center" style={{backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBd35Odw5VTemVt1xtsIaijDQPvkVE4XjBsQvALM0YIGYDz7lQAGLiNjYNPAWk7_OgbgD4bTKoKh94o_UJClkrTuirdd4wDpF0Ug-TsafwAa5_ah-I5cP5HzgmU5lfggiIp84I2Fsx9ly_rZz0R1M60Jj0vIvPiT7X3bZ9NqW96mR4_LiK_B_vcg5PqaasxdLZSzQ92yhkrHhGD9HgOeOVijcLuFwWZBsUrtmbR74_HaBOHdu69kWr0ZXa9PmYgLze_AVkK7xxLlfM')"}}></div>
+                            <div className="flex-1">
+                                <h3 className="font-bold">红烧肉 Braised Pork Belly</h3>
+                                <p className="text-xs text-slate-500">2023-10-24 12:30</p>
+                            </div>
+                            <span className="material-symbols-outlined text-primary fill-icon">star</span>
+                        </div>
+                        <div className="p-4 bg-white dark:bg-primary/5 rounded-xl border border-primary/20 flex items-center gap-4 opacity-75">
+                            <div className="size-16 rounded-lg bg-primary/20 flex items-center justify-center"><span className="material-symbols-outlined text-primary">ramen_dining</span></div>
+                            <div className="flex-1">
+                                <h3 className="font-bold">红油抄手 Wontons</h3>
+                                <p className="text-xs text-slate-500">2023-10-23 18:15</p>
+                            </div>
+                            <span className="material-symbols-outlined text-slate-400">star</span>
+                        </div>
+                    </main>
+                    <BottomNav activeTab="history" />
+                </div>
+            )
+        }
+
+        // --- App Component ---
+
+        const App = () => {
+            return (
+                <MemoryRouter initialEntries={['/']}>
+                    <Routes>
+                        <Route path="/" element={<SplashScreen />} />
+                        <Route path="/home" element={<HomePage />} />
+                        <Route path="/swipe" element={<SwipeDecision />} />
+                        <Route path="/result" element={<ResultScreen />} />
+                        <Route path="/failure" element={<FailureScreen />} />
+                        <Route path="/settings" element={<SettingsScreen />} />
+                        <Route path="/history" element={<HistoryScreen />} />
+                    </Routes>
+                </MemoryRouter>
+            );
+        };
+
+        const root = createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
