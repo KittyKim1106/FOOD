@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Query
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Dict, Optional
 import hashlib
@@ -122,7 +122,7 @@ async def login(request: UserLogin):
 
 
 @app.get("/api/user/settings")
-async def get_user_settings(token: str):
+async def get_user_settings(token: str = Query(...)):
     """获取用户设置"""
     user_id = get_current_user(token)
     settings = user_settings_db.get(user_id)
@@ -132,7 +132,7 @@ async def get_user_settings(token: str):
 
 
 @app.put("/api/user/settings")
-async def update_user_settings(token: str, request: SettingsUpdate):
+async def update_user_settings(request: SettingsUpdate, token: str = Query(...)):
     """更新用户设置"""
     user_id = get_current_user(token)
     settings = UserSettings(
@@ -147,7 +147,7 @@ async def update_user_settings(token: str, request: SettingsUpdate):
 
 # ========== 智能推荐接口 ==========
 @app.post("/api/decision/recommend", response_model=RecommendationResponse)
-async def recommend(request: RecommendationRequest, token: str):
+async def recommend(request: RecommendationRequest, token: str = Query(...)):
     """基于用户输入的个性化推荐"""
     import random
     
@@ -233,7 +233,7 @@ async def get_recommendations():
 
 # ========== 历史记录接口 ==========
 @app.get("/api/user/history")
-async def get_history(token: str, limit: int = 10, offset: int = 0):
+async def get_history(token: str = Query(...), limit: int = 10, offset: int = 0):
     """获取用户历史决策记录"""
     user_id = get_current_user(token)
     history = history_db.get(user_id, [])
@@ -248,7 +248,7 @@ async def get_history(token: str, limit: int = 10, offset: int = 0):
 
 
 @app.post("/api/decision/save")
-async def save_decision(token: str, dish_id: str, decision: str):
+async def save_decision(token: str = Query(...), dish_id: str = Query(...), decision: str = Query(...)):
     """保存用户决策"""
     user_id = get_current_user(token)
     
@@ -276,7 +276,7 @@ async def save_decision(token: str, dish_id: str, decision: str):
 
 
 @app.put("/api/user/history/{history_id}/favorite")
-async def mark_favorite(token: str, history_id: str):
+async def mark_favorite(history_id: str, token: str = Query(...)):
     """标记历史记录为收藏"""
     user_id = get_current_user(token)
     history = history_db.get(user_id, [])
