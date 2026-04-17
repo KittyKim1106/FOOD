@@ -163,15 +163,11 @@ async def recommend(request: RecommendationRequest, token: str = Query(...)):
     # 过滤菜品
     available_dishes = ALL_DISHES.copy()
     
-    # 1. 根据意图过滤
-    if request.intent == "不想吃":
-        # 反向推荐：排除用户选择的类别
-        if request.selected_categories:
-            available_dishes = [d for d in available_dishes if d.category not in request.selected_categories]
-    else:  # "想吃"
-        # 正向筛选：只保留用户选择的类别
-        if request.selected_categories:
-            available_dishes = [d for d in available_dishes if d.category in request.selected_categories]
+    # 1. 根据类别过滤
+    if request.selected_categories:
+        available_dishes = [d for d in available_dishes if d.category in request.selected_categories]
+    if request.excluded_categories:
+        available_dishes = [d for d in available_dishes if d.category not in request.excluded_categories]
     
     # 2. 排除味道
     if excluded_flavors:
@@ -272,7 +268,7 @@ async def save_decision(token: str = Query(...), dish_id: str = Query(...), deci
         history_db[user_id] = []
     history_db[user_id].append(record)
     
-    return {"success": True}
+    return {"success": True, "historyId": record.id}
 
 
 @app.put("/api/user/history/{history_id}/favorite")

@@ -27,6 +27,7 @@ class RecommendationRequest(BaseModel):
     """推荐请求模型"""
     intent: str  # "想吃" 或 "不想吃"
     selected_categories: List[str] = []  # 选中的食物类别
+    excluded_categories: List[str] = []  # 排除的食物类别
     excluded_flavors: List[str] = []  # 排除的味道
     excluded_ingredients: List[str] = []  # 排除的食材
 
