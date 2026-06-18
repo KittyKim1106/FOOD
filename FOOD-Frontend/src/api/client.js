@@ -1,35 +1,33 @@
 import { storage } from '../utils/storage';
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000';
 
 class ApiClient {
   async request(endpoint, options = {}) {
-    // Create base URL, handling if endpoint already has query params
     const urlStr = endpoint.startsWith('http') ? endpoint : `${API_BASE}${endpoint}`;
     const url = new URL(urlStr);
     const token = storage.getToken();
-    
-    // Auth routes don't need token parameter
+
     if (token && !url.pathname.startsWith('/api/auth/') && !url.pathname.startsWith('/api/foods/')) {
-        url.searchParams.append('token', token);
+      url.searchParams.append('token', token);
     }
-    
+
     try {
       const res = await fetch(url.toString(), {
         headers: { 'Content-Type': 'application/json' },
         ...options
       });
-      
+
       const payload = await res.json();
-      
+
       if (!res.ok) {
         if (res.status === 401) {
-            storage.clearAuth();
-            window.location.href = '/login';
+          storage.clearAuth();
+          window.location.href = '/login';
         }
         throw new Error(payload.detail || payload.message || 'API Error');
       }
-      
+
       return payload;
     } catch (error) {
       console.error('API call failed:', error);
@@ -58,7 +56,6 @@ class ApiClient {
   updateSettings(excludedFlavors, excludedIngredients) {
     return this.request('/api/user/settings', {
       method: 'PUT',
-      // Convert to snake_case for Python backend
       body: JSON.stringify({
         excluded_flavors: excludedFlavors,
         excluded_ingredients: excludedIngredients
@@ -69,7 +66,6 @@ class ApiClient {
   getRecommendation(intent, selectedCategories, excludedCategories, excludedFlavors, excludedIngredients) {
     return this.request('/api/decision/recommend', {
       method: 'POST',
-      // Convert to snake_case for Python backend
       body: JSON.stringify({
         intent,
         selected_categories: selectedCategories,
@@ -94,6 +90,20 @@ class ApiClient {
 
   getCategories() {
     return this.request('/api/foods/categories', { method: 'GET' });
+  }
+
+  // 附近商家查询
+  getNearbyMerchants(dishId, latitude, longitude, radiusKm = 5, serviceType = null) {
+    return this.request('/api/nearby/merchants', {
+      method: 'POST',
+      body: JSON.stringify({
+        dish_id: dishId,
+        latitude,
+        longitude,
+        radius_km: radiusKm,
+        service_type: serviceType,
+      })
+    });
   }
 }
 

@@ -1,0 +1,47 @@
+version: "3.8"
+
+services:
+  # ========== PostgreSQL 数据库 ==========
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: food_db
+      POSTGRES_USER: food_user
+      POSTGRES_PASSWORD: food_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U food_user -d food_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ========== FastAPI 后端 ==========
+  backend:
+    build: ./FOOD-Backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://food_user:food_pass@db:5432/food_db
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # ========== React 前端 (Nginx) ==========
+  frontend:
+    build:
+      context: ./FOOD-Frontend
+      args:
+        VITE_API_BASE: http://localhost:8000
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
