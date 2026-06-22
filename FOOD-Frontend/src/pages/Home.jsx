@@ -3,28 +3,27 @@ import { useNavigate } from 'react-router-dom';
 import BottomNav from '../components/BottomNav';
 import { apiClient } from '../api/client';
 
+const categoryConfigs = {
+    '肉类': { sub: 'Meat', icon: 'kebab_dining' },
+    '海鲜': { sub: 'Seafood', icon: 'set_meal' },
+    '蔬菜': { sub: 'Veggies', icon: 'eco' },
+    '面条': { sub: 'Noodle', icon: 'ramen_dining' },
+    '米饭': { sub: 'Rice', icon: 'rice_bowl' },
+    '水果': { sub: 'Fruit', icon: 'nutrition' },
+    '甜点': { sub: 'Dessert', icon: 'icecream' },
+    '饮品': { sub: 'Drinks', icon: 'local_bar' },
+    '零食': { sub: 'Snacks', icon: 'cookie' },
+    '火锅': { sub: 'Hotpot', icon: 'hot_tub' },
+    '烧烤': { sub: 'BBQ', icon: 'outdoor_grill' },
+    '快餐': { sub: 'Fast Food', icon: 'fastfood' }
+};
+
 export default function Home() {
     const navigate = useNavigate();
     const [wantedCategories, setWantedCategories] = useState([]);
     const [unwantedCategories, setUnwantedCategories] = useState([]);
     const [intent, setIntent] = useState('想吃');
     const [categories, setCategories] = useState([]);
-    
-    // Mapping definitions
-    const categoryConfigs = {
-        '肉类': { sub: 'Meat', icon: 'kebab_dining' },
-        '海鲜': { sub: 'Seafood', icon: 'set_meal' },
-        '蔬菜': { sub: 'Veggies', icon: 'eco' },
-        '面条': { sub: 'Noodle', icon: 'ramen_dining' },
-        '米饭': { sub: 'Rice', icon: 'rice_bowl' },
-        '水果': { sub: 'Fruit', icon: 'nutrition' },
-        '甜点': { sub: 'Dessert', icon: 'icecream' },
-        '饮品': { sub: 'Drinks', icon: 'local_bar' },
-        '零食': { sub: 'Snacks', icon: 'cookie' },
-        '火锅': { sub: 'Hotpot', icon: 'hot_tub' },
-        '烧烤': { sub: 'BBQ', icon: 'outdoor_grill' },
-        '快餐': { sub: 'Fast Food', icon: 'fastfood' }
-    };
 
     useEffect(() => {
         apiClient.getCategories().then(res => {
@@ -42,7 +41,7 @@ export default function Home() {
                 }
             }
         });
-    }, []);
+    }, [unwantedCategories.length, wantedCategories.length]);
 
     const toggle = (item) => {
         if (intent === '想吃') {

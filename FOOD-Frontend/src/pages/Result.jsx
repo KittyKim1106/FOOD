@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BottomNav from '../components/BottomNav';
+import { DishAvatar, DishBackdrop } from '../components/DishVisual';
 import { apiClient } from '../api/client';
 
 export default function Result() {
@@ -37,7 +38,7 @@ export default function Result() {
                     setLoadingNearby(false);
                 }
             },
-            (err) => {
+            () => {
                 setLocationError('无法获取位置信息，请允许定位权限');
                 setLoadingNearby(false);
             },
@@ -73,18 +74,16 @@ export default function Result() {
                 <div className="relative group">
                     <div className="absolute -inset-1 bg-gradient-to-r from-primary to-orange-600 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
                     <div className="relative bg-white dark:bg-[#27221b] border border-primary/20 rounded-xl overflow-hidden shadow-2xl">
-                        <div className="aspect-[4/5] relative flex flex-col items-center justify-center p-8 bg-cover bg-center" style={{backgroundImage: `linear-gradient(to bottom, rgba(24,21,17,0.4), rgba(24,21,17,0.9)), url('${dish.image_url}')`}}>
+                        <DishBackdrop dish={dish} className="aspect-[4/5] p-8">
                             <div className="absolute top-4 left-4">
                                 <span className="bg-primary text-background-dark px-3 py-1 rounded-full text-xs font-black tracking-tighter uppercase">Selected</span>
                             </div>
-                            <div className="text-center z-10 w-full px-2">
-                                <div className="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary text-background-dark">
-                                    <span className="material-symbols-outlined !text-4xl fill-icon">restaurant_menu</span>
-                                </div>
+                            <div className="flex h-full flex-col items-center justify-center text-center w-full px-2">
+                                <DishAvatar dish={dish} className="mb-4 h-16 w-16" />
                                 <h3 className="text-white text-5xl font-black mb-4 tracking-tighter drop-shadow-2xl">【{dish.name}】</h3>
                                 <p className="text-primary text-xl font-bold italic tracking-wide">{dish.restaurant_name}</p>
                             </div>
-                            <div className="mt-12 w-full z-10">
+                            <div className="absolute bottom-8 left-8 right-8">
                                 <div className="flex items-center justify-between border-t border-white/20 pt-6">
                                     <div className="flex flex-col">
                                         <span className="text-white/60 text-xs uppercase font-bold tracking-widest">Confidence</span>
@@ -95,7 +94,7 @@ export default function Result() {
                                     </button>
                                 </div>
                             </div>
-                        </div>
+                        </DishBackdrop>
                     </div>
                 </div>
 

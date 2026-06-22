@@ -24,8 +24,12 @@ export default function Splash() {
                 </div>
                 <h1 className="text-slate-900 tracking-tighter text-6xl font-bold leading-tight text-center mb-4 font-display">犹豫就会饿死</h1>
                 <div className="w-full aspect-square max-w-[280px] my-8">
-                    <div className="w-full h-full bg-slate-900 rounded-3xl flex items-center justify-center overflow-hidden shadow-2xl rotate-3">
-                        <div className="w-full h-full bg-center bg-no-repeat bg-cover opacity-80" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDy9kRAH-if1hIYE80jwMIhnNjiY2fDt84b2wpUjugWuVFZ0k9OYjN14_3tkFW8_3s0r_FbxyNAdjvFmuf2LHSA7w6BJDoRyQLotzcdEAkohdtPQhatdr1ehVMyhl0ZkahCPZW4nSh1PzJzKCpp8kfD4bJNWE-xq4FmgKnJ4ReADSe1BbYDa9FPEJ7mNzMyDYqw36NFS0U2dAiLcn0Ea5KnsyRhVkXhu7GkKdb-mi812EqfLFK5WhVqTIbxo_pSh_etsv1aU0c8Srg")'}}></div>
+                    <div className="relative w-full h-full bg-slate-900 rounded-3xl flex items-center justify-center overflow-hidden shadow-2xl rotate-3">
+                        <div className="absolute inset-0 bg-[linear-gradient(135deg,#111827_0%,#7c2d12_56%,#f49d25_100%),linear-gradient(45deg,transparent_0_38%,rgba(255,255,255,0.16)_38%_48%,transparent_48%_100%)]"></div>
+                        <div className="absolute -left-10 top-10 h-20 w-[120%] -rotate-12 bg-white/10"></div>
+                        <div className="absolute -right-10 bottom-12 h-14 w-[120%] -rotate-12 bg-black/10"></div>
+                        <span className="material-symbols-outlined relative z-10 text-primary text-[9rem] drop-shadow-2xl">ramen_dining</span>
+                        <span className="material-symbols-outlined absolute bottom-8 right-8 text-white/30 text-5xl">local_fire_department</span>
                     </div>
                 </div>
                 <p className="text-slate-900 text-2xl font-bold leading-snug tracking-tight text-center max-w-xs mb-12">别想了，再想就饿昏过去了。</p>

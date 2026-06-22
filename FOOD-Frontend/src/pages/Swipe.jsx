@@ -1,32 +1,113 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+﻿import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion as Motion, useAnimationControls, useMotionValue, useReducedMotion, useTransform } from 'framer-motion';
 import { apiClient } from '../api/client';
+import { DishAvatar, DishBackdrop } from '../components/DishVisual';
+import { fadeUp, scaleIn, springBouncy, springCard, springSoft } from '../lib/motion';
 
 const SWIPE_THRESHOLD = 100;
 const SWIPE_VELOCITY_THRESHOLD = 0.5;
+const FLY_DISTANCE = 640;
+
+const actionMap = { left: 'pass', right: 'pick', up: 'save' };
+
+const directionFeedback = {
+    right: {
+        border: 'border-green-500',
+        bg: 'bg-green-500/10',
+        text: 'text-green-500',
+        icon: 'favorite',
+        opacityRange: [50, 150],
+    },
+    left: {
+        border: 'border-red-500',
+        bg: 'bg-red-500/10',
+        text: 'text-red-500',
+        icon: 'close',
+        opacityRange: [-50, -150],
+    },
+    up: {
+        border: 'border-blue-500',
+        bg: 'bg-blue-500/10',
+        text: 'text-blue-500',
+        icon: 'star',
+        opacityRange: [-50, -150],
+    },
+};
+
+function getSwipeDirection(offset, velocity) {
+    const absX = Math.abs(offset.x);
+    const absY = Math.abs(offset.y);
+    const speed = Math.sqrt(velocity.x ** 2 + velocity.y ** 2);
+    const isFarSwipe = absX > SWIPE_THRESHOLD || absY > SWIPE_THRESHOLD;
+    const isFastSwipe = speed > SWIPE_VELOCITY_THRESHOLD * 1000;
+
+    if (!isFarSwipe && !isFastSwipe) return null;
+    if (absX > absY) return offset.x > 0 ? 'right' : 'left';
+    return offset.y < 0 ? 'up' : null;
+}
+
+function getFlyTarget(direction) {
+    const flyMap = {
+        left: { x: -FLY_DISTANCE, y: 0, rotate: -28, opacity: 0, scale: 0.96 },
+        right: { x: FLY_DISTANCE, y: 0, rotate: 28, opacity: 0, scale: 0.96 },
+        up: { x: 0, y: -FLY_DISTANCE, rotate: 0, opacity: 0, scale: 0.96 },
+    };
+
+    return flyMap[direction];
+}
+
+function DirectionIndicator({ direction, opacity }) {
+    const feedback = directionFeedback[direction];
+
+    return (
+        <Motion.div
+            className={`absolute inset-0 rounded-xl border-4 ${feedback.border} ${feedback.bg} z-20 flex items-center justify-center pointer-events-none`}
+            style={{ opacity }}
+        >
+            <Motion.span
+                className={`material-symbols-outlined ${feedback.text} text-7xl drop-shadow-lg`}
+                style={{ scale: opacity }}
+            >
+                {feedback.icon}
+            </Motion.span>
+        </Motion.div>
+    );
+}
 
 export default function Swipe() {
     const navigate = useNavigate();
     const [dish, setDish] = useState(null);
     const [confidence, setConfidence] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [swipingOut, setSwipingOut] = useState(false);
 
-    // Swipe gesture state
-    const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-    const [isDragging, setIsDragging] = useState(false);
-    const [swipingOut, setSwipingOut] = useState(null); // 'left' | 'right' | 'up' | null
-    const startPos = useRef({ x: 0, y: 0 });
-    const startTime = useRef(0);
-    const cardRef = useRef(null);
+    const controls = useAnimationControls();
+    const shouldReduceMotion = useReducedMotion();
+    const x = useMotionValue(0);
+    const y = useMotionValue(0);
+    const rotate = useTransform(x, [-180, 0, 180], [-14, 0, 14]);
+    const cardScale = useTransform(y, [-180, 0, 180], [1.02, 1, 0.98]);
+    const rightOpacity = useTransform(x, directionFeedback.right.opacityRange, [0, 1]);
+    const leftOpacity = useTransform(x, directionFeedback.left.opacityRange, [0, 1]);
+    const upOpacity = useTransform(y, directionFeedback.up.opacityRange, [0, 1]);
 
-    const intent = localStorage.getItem('temp_intent') || '想吃';
-    const selectedCategories = JSON.parse(localStorage.getItem('temp_selected_categories') || '[]');
-    const excludedCategories = JSON.parse(localStorage.getItem('temp_excluded_categories') || '[]');
+    const intent = useMemo(() => localStorage.getItem('temp_intent') || '想吃', []);
+    const selectedCategories = useMemo(
+        () => JSON.parse(localStorage.getItem('temp_selected_categories') || '[]'),
+        []
+    );
+    const excludedCategories = useMemo(
+        () => JSON.parse(localStorage.getItem('temp_excluded_categories') || '[]'),
+        []
+    );
 
-    const fetchNext = async () => {
+    const fetchNext = useCallback(async () => {
         setLoading(true);
-        setDragOffset({ x: 0, y: 0 });
-        setSwipingOut(null);
+        setSwipingOut(false);
+        x.set(0);
+        y.set(0);
+        controls.set({ x: 0, y: 0, rotate: 0, opacity: 1, scale: 1 });
         try {
             const res = await apiClient.getRecommendation(intent, selectedCategories, excludedCategories, [], []);
             if (res.recommendation) {
@@ -41,11 +122,11 @@ export default function Swipe() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [controls, excludedCategories, intent, navigate, selectedCategories, x, y]);
 
     useEffect(() => {
         fetchNext();
-    }, []);
+    }, [fetchNext]);
 
     const handleAction = useCallback(async (action) => {
         if (!dish) return;
@@ -68,126 +149,38 @@ export default function Swipe() {
         } catch (err) {
             console.error(err);
         }
-    }, [dish, confidence, navigate]);
+    }, [confidence, dish, fetchNext, navigate]);
 
-    // Touch handlers
-    const onTouchStart = (e) => {
-        if (swipingOut || loading) return;
-        const touch = e.touches[0];
-        startPos.current = { x: touch.clientX, y: touch.clientY };
-        startTime.current = Date.now();
-        setIsDragging(true);
-    };
+    const flyOut = useCallback(async (direction) => {
+        if (swipingOut || loading || !dish) return;
+        setSwipingOut(true);
 
-    const onTouchMove = (e) => {
-        if (!isDragging || swipingOut) return;
-        const touch = e.touches[0];
-        const dx = touch.clientX - startPos.current.x;
-        const dy = touch.clientY - startPos.current.y;
-        setDragOffset({ x: dx, y: dy });
-    };
-
-    const onTouchEnd = () => {
-        if (!isDragging) return;
-        setIsDragging(false);
-
-        const elapsed = Date.now() - startTime.current;
-        const velocity = Math.sqrt(dragOffset.x ** 2 + dragOffset.y ** 2) / elapsed;
-        const isFastSwipe = velocity > SWIPE_VELOCITY_THRESHOLD;
-        const isFarSwipe = Math.abs(dragOffset.x) > SWIPE_THRESHOLD || Math.abs(dragOffset.y) > SWIPE_THRESHOLD;
-
-        if (isFarSwipe || isFastSwipe) {
-            // Determine direction
-            if (Math.abs(dragOffset.x) > Math.abs(dragOffset.y)) {
-                // Horizontal swipe
-                if (dragOffset.x > 0) {
-                    flyOut('right');
-                } else {
-                    flyOut('left');
-                }
-            } else {
-                // Vertical swipe
-                if (dragOffset.y < 0) {
-                    flyOut('up');
-                } else {
-                    // Swipe down = reset
-                    setDragOffset({ x: 0, y: 0 });
-                }
-            }
-        } else {
-            // Snap back
-            setDragOffset({ x: 0, y: 0 });
+        if (shouldReduceMotion) {
+            await handleAction(actionMap[direction]);
+            return;
         }
-    };
 
-    const flyOut = (direction) => {
-        setSwipingOut(direction);
-        const actionMap = { left: 'pass', right: 'pick', up: 'save' };
-        setTimeout(() => {
-            handleAction(actionMap[direction]);
-        }, 300);
-    };
+        await controls.start({
+            ...getFlyTarget(direction),
+            transition: { duration: 0.28, ease: [0.32, 0.72, 0, 1] },
+        });
+        await handleAction(actionMap[direction]);
+    }, [controls, dish, handleAction, loading, shouldReduceMotion, swipingOut]);
 
-    // Card transform style
-    const getCardStyle = () => {
-        if (swipingOut) {
-            const flyDistance = 600;
-            const flyMap = {
-                left: { x: -flyDistance, y: 0, rotate: -30 },
-                right: { x: flyDistance, y: 0, rotate: 30 },
-                up: { x: 0, y: -flyDistance, rotate: 0 },
-            };
-            const fly = flyMap[swipingOut];
-            return {
-                transform: `translateX(${fly.x}px) translateY(${fly.y}px) rotate(${fly.rotate}deg)`,
-                opacity: 0,
-                transition: 'transform 300ms ease, opacity 300ms ease',
-            };
+    const handleDragEnd = (_, info) => {
+        const direction = getSwipeDirection(info.offset, info.velocity);
+        if (direction) {
+            flyOut(direction);
+            return;
         }
-        if (isDragging || (dragOffset.x !== 0 || dragOffset.y !== 0)) {
-            const rotate = dragOffset.x * 0.08;
-            return {
-                transform: `translateX(${dragOffset.x}px) translateY(${dragOffset.y}px) rotate(${rotate}deg)`,
-                transition: isDragging ? 'none' : 'transform 300ms ease',
-            };
-        }
-        return {
-            transform: 'translateX(0) translateY(0) rotate(0deg)',
-            transition: 'transform 300ms ease',
-        };
-    };
 
-    // Direction indicator overlay
-    const getIndicator = () => {
-        if (!isDragging) return null;
-        const absX = Math.abs(dragOffset.x);
-        const absY = Math.abs(dragOffset.y);
-        const threshold = 50;
-
-        if (absX < threshold && absY < threshold) return null;
-
-        if (absX > absY) {
-            if (dragOffset.x > 0) {
-                return (
-                    <div className="absolute inset-0 rounded-xl border-4 border-green-500 bg-green-500/10 z-20 flex items-center justify-center pointer-events-none">
-                        <span className="material-symbols-outlined text-green-500 text-7xl drop-shadow-lg">favorite</span>
-                    </div>
-                );
-            }
-            return (
-                <div className="absolute inset-0 rounded-xl border-4 border-red-500 bg-red-500/10 z-20 flex items-center justify-center pointer-events-none">
-                    <span className="material-symbols-outlined text-red-500 text-7xl drop-shadow-lg">close</span>
-                </div>
-            );
-        }
-        if (dragOffset.y < 0) {
-            return (
-                <div className="absolute inset-0 rounded-xl border-4 border-blue-500 bg-blue-500/10 z-20 flex items-center justify-center pointer-events-none">
-                    <span className="material-symbols-outlined text-blue-500 text-7xl drop-shadow-lg">star</span>
-                </div>
-            );
-        }
-        return null;
+        controls.start({
+            x: 0,
+            y: 0,
+            rotate: 0,
+            scale: 1,
+            transition: shouldReduceMotion ? { duration: 0.01 } : springCard,
+        });
     };
 
     return (
@@ -201,43 +194,56 @@ export default function Swipe() {
                     <span className="material-symbols-outlined text-2xl">history</span>
                 </button>
             </header>
-            <main className="flex-1 flex flex-col items-center justify-center p-6 gap-8 max-w-md mx-auto w-full">
-                <div className="text-center space-y-2">
+            <Motion.main
+                className="flex-1 flex flex-col items-center justify-center p-6 gap-8 max-w-md mx-auto w-full"
+                initial="hidden"
+                animate="visible"
+                variants={fadeUp}
+            >
+                <Motion.div className="text-center space-y-2" variants={fadeUp}>
                     <h2 className="text-2xl font-display font-extrabold leading-tight tracking-tight text-slate-900 dark:text-slate-100">看着不错，要不就它了？</h2>
                     <p className="text-slate-500 dark:text-primary/60 font-medium uppercase tracking-widest text-xs">
                         <span className="material-symbols-outlined text-sm align-middle mr-1">swipe</span>
                         Swipe to Decide
                     </p>
-                </div>
+                </Motion.div>
 
                 {loading ? (
-                    <div className="w-full aspect-[4/5] flex items-center justify-center">
+                    <Motion.div
+                        className="w-full aspect-[4/5] flex items-center justify-center"
+                        variants={scaleIn}
+                    >
                         <span className="material-symbols-outlined animate-spin text-primary text-6xl">refresh</span>
-                    </div>
+                    </Motion.div>
                 ) : dish ? (
-                    <div
-                        ref={cardRef}
+                    <Motion.div
+                        key={dish.id}
                         className="relative w-full aspect-[4/5] touch-none select-none"
-                        onTouchStart={onTouchStart}
-                        onTouchMove={onTouchMove}
-                        onTouchEnd={onTouchEnd}
-                        style={getCardStyle()}
+                        drag={!swipingOut && !loading}
+                        dragElastic={0.2}
+                        dragMomentum={false}
+                        onDragEnd={handleDragEnd}
+                        animate={controls}
+                        initial={{ opacity: 0, y: 24, scale: 0.96 }}
+                        whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                        transition={shouldReduceMotion ? { duration: 0.01 } : springSoft}
+                        style={{ x, y, rotate, scale: cardScale }}
                     >
                         {/* Background cards */}
-                        <div className="absolute inset-0 bg-primary/10 rounded-xl rotate-3 scale-95 border-2 border-primary/20"></div>
-                        <div className="absolute inset-0 bg-primary/20 rounded-xl -rotate-2 scale-[0.97] border-2 border-primary/30"></div>
+                        <Motion.div
+                            className="absolute inset-0 bg-primary/10 rounded-xl border-2 border-primary/20"
+                            animate={shouldReduceMotion ? undefined : { rotate: 3, scale: 0.95 }}
+                        />
+                        <Motion.div
+                            className="absolute inset-0 bg-primary/20 rounded-xl border-2 border-primary/30"
+                            animate={shouldReduceMotion ? undefined : { rotate: -2, scale: 0.97 }}
+                        />
 
                         {/* Main card */}
                         <div className="relative h-full w-full bg-slate-100 dark:bg-background-dark border-4 border-slate-900 dark:border-primary rounded-xl overflow-hidden shadow-2xl flex flex-col">
-                            <div className="flex-1 relative bg-slate-200 dark:bg-zinc-800/50 flex flex-col items-center justify-center p-8 overflow-hidden bg-cover bg-center" style={{backgroundImage: `linear-gradient(to bottom, rgba(39,34,27,0.8), rgba(39,34,27,0.9)), url('${dish.image_url}')`}}>
-                                <div className="relative z-10 flex flex-col items-center gap-6">
-                                    <div className="w-32 h-32 rounded-full bg-primary flex items-center justify-center shadow-[0_0_40px_rgba(244,157,37,0.4)] overflow-hidden border-4 border-primary">
-                                        {dish.image_url ? (
-                                            <img src={dish.image_url} alt={dish.name} className="w-full h-full object-cover" />
-                                        ) : (
-                                            <span className="material-symbols-outlined text-background-dark text-6xl fill-icon">restaurant_menu</span>
-                                        )}
-                                    </div>
+                            <DishBackdrop dish={dish} className="flex-1 bg-slate-200 dark:bg-zinc-800/50 p-8">
+                                <div className="flex h-full flex-col items-center justify-center gap-6">
+                                    <DishAvatar dish={dish} className="h-32 w-32" />
                                     <h3 className="text-5xl font-display font-black tracking-tighter text-white uppercase text-center">{dish.name}</h3>
                                     <div className="flex gap-2 flex-wrap justify-center">
                                         {(dish.tags || []).map((tag, i) => (
@@ -248,7 +254,7 @@ export default function Swipe() {
                                 <div className="absolute bottom-6 left-6 right-6">
                                     <p className="text-slate-300 text-center font-medium leading-relaxed italic">"{dish.description || '这家伙很懒，没有流传下描述...'}"</p>
                                 </div>
-                            </div>
+                            </DishBackdrop>
                             <div className="p-6 bg-slate-900 dark:bg-primary flex justify-between items-center">
                                 <div className="flex flex-col">
                                     <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-background-dark/60">Estimated Cost</span>
@@ -261,35 +267,59 @@ export default function Swipe() {
                         </div>
 
                         {/* Swipe direction indicator */}
-                        {getIndicator()}
-                    </div>
+                        <DirectionIndicator direction="right" opacity={rightOpacity} />
+                        <DirectionIndicator direction="left" opacity={leftOpacity} />
+                        <DirectionIndicator direction="up" opacity={upOpacity} />
+                    </Motion.div>
                 ) : (
                     <div className="text-red-500 font-bold">No dishes available!</div>
                 )}
 
                 {dish && !loading && (
-                    <div className="w-full grid grid-cols-3 gap-4 px-2">
-                        <button onClick={() => handleAction('pass')} className="flex flex-col items-center gap-2 group cursor-pointer active:scale-95 transition-transform">
+                    <Motion.div className="w-full grid grid-cols-3 gap-4 px-2" variants={fadeUp}>
+                        <Motion.button
+                            onClick={() => flyOut('left')}
+                            disabled={swipingOut}
+                            className="flex flex-col items-center gap-2 group cursor-pointer disabled:pointer-events-none disabled:opacity-60"
+                            whileTap={{ scale: 0.94 }}
+                            whileHover={{ scale: 1.04 }}
+                            transition={springBouncy}
+                        >
                             <div className="w-14 h-14 rounded-full border-2 border-slate-300 dark:border-slate-700 flex items-center justify-center group-hover:bg-red-500/10 hover:border-red-500 transition-all">
                                 <span className="material-symbols-outlined text-slate-400 group-hover:text-red-500 hover:text-red-500">close</span>
                             </div>
                             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Pass</span>
-                        </button>
-                        <button onClick={() => handleAction('save')} className="flex flex-col items-center gap-2 group cursor-pointer active:scale-95 transition-transform">
+                        </Motion.button>
+                        <Motion.button
+                            onClick={() => flyOut('up')}
+                            disabled={swipingOut}
+                            className="flex flex-col items-center gap-2 group cursor-pointer disabled:pointer-events-none disabled:opacity-60"
+                            whileTap={{ scale: 0.94 }}
+                            whileHover={{ scale: 1.04 }}
+                            transition={springBouncy}
+                        >
                             <div className="w-14 h-14 rounded-full border-2 border-slate-300 dark:border-slate-700 flex items-center justify-center group-hover:bg-blue-500/10 hover:border-blue-500 transition-all">
                                 <span className="material-symbols-outlined text-slate-400 group-hover:text-blue-500 hover:text-blue-500">star</span>
                             </div>
                             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Save</span>
-                        </button>
-                        <button onClick={() => handleAction('pick')} className="flex flex-col items-center gap-2 group cursor-pointer active:scale-95 transition-transform">
+                        </Motion.button>
+                        <Motion.button
+                            onClick={() => flyOut('right')}
+                            disabled={swipingOut}
+                            className="flex flex-col items-center gap-2 group cursor-pointer disabled:pointer-events-none disabled:opacity-60"
+                            whileTap={{ scale: 0.94 }}
+                            whileHover={{ scale: 1.04 }}
+                            transition={springBouncy}
+                        >
                             <div className="w-14 h-14 rounded-full border-2 border-slate-300 dark:border-slate-700 flex items-center justify-center group-hover:bg-primary/10 hover:border-primary transition-all">
                                 <span className="material-symbols-outlined text-slate-400 group-hover:text-primary fill-icon hover:text-primary">favorite</span>
                             </div>
                             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Pick</span>
-                        </button>
-                    </div>
+                        </Motion.button>
+                    </Motion.div>
                 )}
-            </main>
+            </Motion.main>
         </div>
     );
 }
+

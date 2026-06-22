@@ -5,8 +5,6 @@ import { apiClient } from '../api/client';
 
 export default function Settings() {
     const navigate = useNavigate();
-    const [flavors, setFlavors] = useState([]);
-    const [ingredients, setIngredients] = useState([]);
     
     // We can fetch from API and map them to our UI list.
     const baseFlavors = [
